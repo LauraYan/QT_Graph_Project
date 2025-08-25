@@ -5,6 +5,8 @@
 #include "GraphicsView.h"
 
 class QGraphicsScene;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 class MainWindow : public QMainWindow
 {
@@ -15,11 +17,14 @@ public:
   ~MainWindow();
 
   void createMenus();
+  void addShape(const QString& name, const QRectF& rect);
  
 
  protected:
    void createFileMenus();
    void createEditMenus();
+   void initTreeWidget();
+   void closeEvent(QCloseEvent* event) override;
 
 protected slots:
   void openFile();
@@ -30,6 +35,8 @@ protected slots:
   void addCircleShape();
   void addRectShape();
   void addEllipseShape();
+  void onTreeItemClicked(QTreeWidgetItem* item, int column);
+ 
 
 private:
     Ui::MainWindow ui;

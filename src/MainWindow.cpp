@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QFileDialog>
@@ -10,7 +10,11 @@
 #include <QPdfWriter>  //PDF 
 #include <QDesktopServices> // pop up the file folder 
 #include <QUrl>
+#include <QCloseEvent>
 
+#include <QSplitter>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 /*
 * Constructor to create a scene and view
 */
@@ -18,13 +22,19 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    createMenus();
+
+    createMenus(); 
+    initTreeWidget();
+
     scene = new QGraphicsScene(ui.frame);
-    scene->setSceneRect(ui.frame->x(), ui.frame->y(), 800, 600);
+    scene->setSceneRect(ui.frame->x(), ui.frame->y(), 1000, 600);
     view = new GraphicsView(scene, ui.frame);
     view->setRenderHint(QPainter::Antialiasing);
 
-    setCentralWidget(ui.frame);  
+   // addShape("Rectangle", QRectF(0, 0, 100, 50));
+
+    // Sync selection between tree and scene
+    connect(ui.treeWidget, &QTreeWidget::itemClicked, this, &MainWindow::onTreeItemClicked);
 }
 
 /*
@@ -106,6 +116,27 @@ void MainWindow::exitApp() {
 }
 
 /*
+* This is overrided close event function.
+*/
+void MainWindow::closeEvent(QCloseEvent* event)  {
+
+  // Show a warning dialog
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::question(this, "Save Changes","Do you want to save before exiting?",
+                                QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+  if (reply == QMessageBox::Yes) {
+
+    saveImageFile();
+    event->accept();  // allow closing
+  }
+  else if (reply == QMessageBox::No) 
+    event->accept();  
+  else 
+    event->ignore(); 
+}
+
+/*
 * Wrapper funciton to add File and Edit menu.
 */
 void MainWindow::createMenus() {
@@ -162,6 +193,40 @@ void MainWindow::createEditMenus() {
 }
 
 /*
+* This will create a tree widget and its shape group name.
+*/
+void MainWindow::initTreeWidget() {
+
+  // Root categories
+  ui.treeWidget->setHeaderLabel("Shapes");   
+  
+  // set the column header text
+  QTreeWidgetItem* circleRoot = new QTreeWidgetItem(ui.treeWidget);
+  circleRoot->setText(0, "Circle");
+
+  QTreeWidgetItem* ellipseRoot = new QTreeWidgetItem(ui.treeWidget);
+  ellipseRoot->setText(0, "Ellipse");
+
+  QTreeWidgetItem* rectRoot = new QTreeWidgetItem(ui.treeWidget);
+  rectRoot->setText(0, "Rectangle");
+}
+
+/*
+* slot function click the tree widget item, will select it on the view area.
+*/
+void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column) {
+
+  if (!item) return;
+  QVariant ptr = item->data(0, Qt::UserRole);
+  QGraphicsItem* shape = reinterpret_cast<QGraphicsItem*>(ptr.value<void*>());
+
+  if (shape) {
+    //scene->clearSelection();
+    //shape->setSelected(true);
+  }
+}
+
+/*
 * slot function to draw a circle shape.
 */
 void MainWindow::addCircleShape() {
@@ -188,3 +253,14 @@ void MainWindow::addEllipseShape() {
   ellipse->setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
 
+void  MainWindow:: addShape(const QString& name, const QRectF& rect) {
+  // Add graphics item
+  QGraphicsRectItem* shape = scene->addRect(rect);
+  shape->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+
+  // Add node in tree
+  QTreeWidgetItem* item = new QTreeWidgetItem(ui.treeWidget);
+  item->setText(0, name);
+  // Store pointer to shape inside node
+  item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(shape));
+}
