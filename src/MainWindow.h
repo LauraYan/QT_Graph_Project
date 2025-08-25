@@ -2,8 +2,8 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
+#include "GraphicsView.h"
 
-class QGraphicsView;
 class QGraphicsScene;
 
 class MainWindow : public QMainWindow
@@ -15,6 +15,11 @@ public:
   ~MainWindow();
 
   void createMenus();
+ 
+
+ protected:
+   void createFileMenus();
+   void createEditMenus();
 
 protected slots:
   void openFile();
@@ -22,9 +27,13 @@ protected slots:
   void savePDFFile();
   void exitApp();
 
+  void addCircleShape();
+  void addRectShape();
+  void addEllipseShape();
+
 private:
     Ui::MainWindow ui;
     QGraphicsScene* scene;
-    QGraphicsView* view;
+    GraphicsView* view;
 };
 
