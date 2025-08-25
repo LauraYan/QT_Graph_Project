@@ -10,4 +10,6 @@ public:
 
 protected:
   void contextMenuEvent(QContextMenuEvent* event) override;
+
+  QGraphicsScene* mScene;
 };
