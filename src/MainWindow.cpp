@@ -233,6 +233,7 @@ void MainWindow::addCircleShape() {
 
   QGraphicsEllipseItem* circle = scene->addEllipse(100, 100, 100, 100, QPen(Qt::black), QBrush(Qt::green));
   circle->setFlag(QGraphicsItem::ItemIsSelectable, true);
+  ui.statusBar->showMessage("Added a circle!", 3000);
 }
 
 /*
@@ -242,6 +243,7 @@ void MainWindow::addRectShape() {
 
   QGraphicsRectItem* rect = scene->addRect(50, 50, 200, 100, QPen(Qt::black), QBrush(Qt::blue));
   rect->setFlag(QGraphicsItem::ItemIsSelectable, true);
+  ui.statusBar->showMessage("Added a rectangle!", 3000);
 }
 
 /*
@@ -251,6 +253,8 @@ void MainWindow::addEllipseShape() {
 
   QGraphicsEllipseItem* ellipse = scene->addEllipse(300, 200, 100, 100, QPen(Qt::red), QBrush(Qt::yellow));
   ellipse->setFlag(QGraphicsItem::ItemIsSelectable, true);
+  //ui.statusBar->clearMessage();
+  ui.statusBar->showMessage("Added an ellipse!", 3000);
 }
 
 void  MainWindow:: addShape(const QString& name, const QRectF& rect) {

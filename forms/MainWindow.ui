@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1174</width>
-    <height>630</height>
+    <width>746</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QT Graph Project</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -51,7 +54,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1174</width>
+     <width>746</width>
      <height>24</height>
     </rect>
    </property>
@@ -64,7 +67,14 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="toolTip">
+    <string>Ready to go.</string>
+   </property>
+   <property name="statusTip">
+    <string>Ready to go.</string>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
