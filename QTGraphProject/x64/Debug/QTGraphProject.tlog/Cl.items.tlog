@@ -1,4 +1,6 @@
-C:\Users\laura\source\repos\QTGraphProject\src\main.cpp;C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\main.obj
-C:\Users\laura\source\repos\QTGraphProject\src\MainWindow.cpp;C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\MainWindow.obj
-C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\qt\rcc\qrc_QTGraphProject.cpp;C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\qrc_QTGraphProject.obj
-C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\qt\moc\moc_MainWindow.cpp;C:\Users\laura\source\repos\QTGraphProject\QTGraphProject\x64\Debug\moc_MainWindow.obj
+C:\Users\laura\source\repos\QT_Graph_Project\GraphicsView.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\GraphicsView.obj
+C:\Users\laura\source\repos\QT_Graph_Project\src\main.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\main.obj
+C:\Users\laura\source\repos\QT_Graph_Project\src\MainWindow.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\MainWindow.obj
+C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\qt\rcc\qrc_QTGraphProject.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\qrc_QTGraphProject.obj
+C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\qt\moc\moc_MainWindow.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\moc_MainWindow.obj
+C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\qt\moc\moc_GraphicsView.cpp;C:\Users\laura\source\repos\QT_Graph_Project\QTGraphProject\x64\Debug\moc_GraphicsView.obj
