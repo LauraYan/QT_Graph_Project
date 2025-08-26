@@ -15,6 +15,11 @@
 #include <QSplitter>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+
+const QString Shape_Group           = "Shapes";
+const QString Shape_Circle_Group    = "Circle";
+const QString Shape_Ellipse_Group   = "Ellipse";
+const QString Shape_Rectangle_Group = "Rectangle";
 /*
 * Constructor to create a scene and view
 */
@@ -26,15 +31,14 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus(); 
     initTreeWidget();
 
-    scene = new QGraphicsScene(ui.frame);
-    scene->setSceneRect(ui.frame->x(), ui.frame->y(), 1000, 600);
-    view = new GraphicsView(scene, ui.frame);
-    view->setRenderHint(QPainter::Antialiasing);
-
-   // addShape("Rectangle", QRectF(0, 0, 100, 50));
+    mGraphScene = new QGraphicsScene(ui.frame);
+    mGraphScene->setSceneRect(ui.frame->x(), ui.frame->y(), 1000, 600);
+    mGraphView = new GraphicsView(mGraphScene, ui.frame);
+    mGraphView->setRenderHint(QPainter::Antialiasing);
 
     // Sync selection between tree and scene
     connect(ui.treeWidget, &QTreeWidget::itemClicked, this, &MainWindow::onTreeItemClicked);
+    connect(mGraphView, &GraphicsView::itmeAdded, this, &MainWindow::addNewTreeWidgetItem);
 }
 
 /*
@@ -51,7 +55,7 @@ void MainWindow::openFile() {
   QString fileName = QFileDialog::getOpenFileName(this, "Open File", "", "Images (*.png *.jpg *.bmp)");
   if (!fileName.isEmpty()) {
     QPixmap pix(fileName);
-    scene->addPixmap(pix);
+    mGraphScene->addPixmap(pix);
   }
 }
 
@@ -62,10 +66,10 @@ void MainWindow::saveImageFile() {
   QString fileName = QFileDialog::getSaveFileName(this, "Save Image File", "", "PNG Images (*.png)");
 
   if (!fileName.isEmpty()) {  
-    QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    QImage image(mGraphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
     image.fill(Qt::white);
     QPainter painter(&image);
-    scene->render(&painter);
+    mGraphScene->render(&painter);
     image.save(fileName);
     QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(fileName).absolutePath()));
   }  // if
@@ -81,10 +85,10 @@ void MainWindow::savePDFFile() {
     return;
 
   // Get image
-  QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+  QImage image(mGraphScene->sceneRect().size().toSize(), QImage::Format_ARGB32);
   image.fill(Qt::white);
   QPainter imagePainter(&image);
-  scene->render(&imagePainter);
+  mGraphScene->render(&imagePainter);
 
   // Start PDF to work
   QPdfWriter writer(fileName);
@@ -198,17 +202,17 @@ void MainWindow::createEditMenus() {
 void MainWindow::initTreeWidget() {
 
   // Root categories
-  ui.treeWidget->setHeaderLabel("Shapes");   
+  ui.treeWidget->setHeaderLabel(Shape_Group);   
   
   // set the column header text
   QTreeWidgetItem* circleRoot = new QTreeWidgetItem(ui.treeWidget);
-  circleRoot->setText(0, "Circle");
+  circleRoot->setText(0, Shape_Circle_Group);
 
   QTreeWidgetItem* ellipseRoot = new QTreeWidgetItem(ui.treeWidget);
-  ellipseRoot->setText(0, "Ellipse");
+  ellipseRoot->setText(0, Shape_Ellipse_Group);
 
   QTreeWidgetItem* rectRoot = new QTreeWidgetItem(ui.treeWidget);
-  rectRoot->setText(0, "Rectangle");
+  rectRoot->setText(0, Shape_Rectangle_Group);
 }
 
 /*
@@ -231,9 +235,11 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column) {
 */
 void MainWindow::addCircleShape() {
 
-  QGraphicsEllipseItem* circle = scene->addEllipse(100, 100, 100, 100, QPen(Qt::black), QBrush(Qt::green));
+  QGraphicsEllipseItem* circle = mGraphScene->addEllipse(100, 100, 100, 100, QPen(Qt::black), QBrush(Qt::green));
   circle->setFlag(QGraphicsItem::ItemIsSelectable, true);
   ui.statusBar->showMessage("Added a circle!", 3000);
+
+  addNewTreeWidgetItem(Shape_Circle_Group, circle);
 }
 
 /*
@@ -241,9 +247,11 @@ void MainWindow::addCircleShape() {
 */
 void MainWindow::addRectShape() {
 
-  QGraphicsRectItem* rect = scene->addRect(50, 50, 200, 100, QPen(Qt::black), QBrush(Qt::blue));
+  QGraphicsRectItem* rect = mGraphScene->addRect(50, 50, 200, 100, QPen(Qt::black), QBrush(Qt::blue));
   rect->setFlag(QGraphicsItem::ItemIsSelectable, true);
   ui.statusBar->showMessage("Added a rectangle!", 3000);
+
+  addNewTreeWidgetItem(Shape_Rectangle_Group, rect);
 }
 
 /*
@@ -251,20 +259,26 @@ void MainWindow::addRectShape() {
 */
 void MainWindow::addEllipseShape() {
 
-  QGraphicsEllipseItem* ellipse = scene->addEllipse(300, 200, 100, 100, QPen(Qt::red), QBrush(Qt::yellow));
+  QGraphicsEllipseItem* ellipse = mGraphScene->addEllipse(300, 200, 100, 100, QPen(Qt::red), QBrush(Qt::yellow));
   ellipse->setFlag(QGraphicsItem::ItemIsSelectable, true);
-  //ui.statusBar->clearMessage();
   ui.statusBar->showMessage("Added an ellipse!", 3000);
+
+  addNewTreeWidgetItem(Shape_Ellipse_Group, ellipse);
 }
 
-void  MainWindow:: addShape(const QString& name, const QRectF& rect) {
-  // Add graphics item
-  QGraphicsRectItem* shape = scene->addRect(rect);
-  shape->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+/*
+* This function will add new item into the tree widget.
+*/
+void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* graphicItem) {
+  // 2. Add corresponding entry in the tree under a group
+  QList<QTreeWidgetItem*> found = ui.treeWidget->findItems(groupName, Qt::MatchExactly | Qt::MatchRecursive);
+  if (!found.isEmpty()) {
+    QTreeWidgetItem* group = found.first();
 
-  // Add node in tree
-  QTreeWidgetItem* item = new QTreeWidgetItem(ui.treeWidget);
-  item->setText(0, name);
-  // Store pointer to shape inside node
-  item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(shape));
+    QTreeWidgetItem* newItem = new QTreeWidgetItem(group);
+    newItem->setText(0, groupName + "_"+ QString::number(group->childCount()));
+
+    // Optional: link the QGraphicsItem with the tree item via QVariant
+    newItem->setData(0, Qt::UserRole, QVariant::fromValue((void*)graphicItem));
+  }
 }

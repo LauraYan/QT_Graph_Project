@@ -17,14 +17,14 @@ public:
   ~MainWindow();
 
   void createMenus();
-  void addShape(const QString& name, const QRectF& rect);
  
-
  protected:
    void createFileMenus();
    void createEditMenus();
    void initTreeWidget();
    void closeEvent(QCloseEvent* event) override;
+
+   
 
 protected slots:
   void openFile();
@@ -36,11 +36,11 @@ protected slots:
   void addRectShape();
   void addEllipseShape();
   void onTreeItemClicked(QTreeWidgetItem* item, int column);
+  void addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* graphicItem);
  
-
 private:
     Ui::MainWindow ui;
-    QGraphicsScene* scene;
-    GraphicsView* view;
+    QGraphicsScene* mGraphScene;
+    GraphicsView* mGraphView;
 };
 
