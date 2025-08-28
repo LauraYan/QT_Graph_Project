@@ -225,8 +225,9 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column) {
   QGraphicsItem* shape = reinterpret_cast<QGraphicsItem*>(ptr.value<void*>());
 
   if (shape) {
-    //scene->clearSelection();
-    //shape->setSelected(true);
+    mGraphScene->clearSelection();
+    shape->setSelected(true);
+    ui.statusBar->showMessage(item->text(column));
   }
 }
 
