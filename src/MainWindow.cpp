@@ -29,16 +29,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui.setupUi(this);
 
     createMenus(); 
-    initTreeWidget();
-
+  
     mGraphScene = new QGraphicsScene(ui.frame);
     mGraphScene->setSceneRect(ui.frame->x(), ui.frame->y(), 1000, 600);
     mGraphView = new GraphicsView(mGraphScene, ui.frame);
     mGraphView->setRenderHint(QPainter::Antialiasing);
 
+    // Tree Widget
+    initTreeWidget();
+    ui.treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
     // Sync selection between tree and scene
     connect(ui.treeWidget, &QTreeWidget::itemClicked, this, &MainWindow::onTreeItemClicked);
     connect(mGraphView, &GraphicsView::itmeAdded, this, &MainWindow::addNewTreeWidgetItem);
+    connect(ui.treeWidget, &QTreeWidget::customContextMenuRequested, this, &MainWindow::showTreeWidgetContextMenu);
 }
 
 /*
@@ -203,7 +207,7 @@ void MainWindow::initTreeWidget() {
 
   // Root categories
   ui.treeWidget->setHeaderLabel(Shape_Group);   
-  
+
   // set the column header text
   QTreeWidgetItem* circleRoot = new QTreeWidgetItem(ui.treeWidget);
   circleRoot->setText(0, Shape_Circle_Group);
@@ -229,6 +233,34 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column) {
     shape->setSelected(true);
     ui.statusBar->showMessage(item->text(column));
   }
+}
+
+void MainWindow::showTreeWidgetContextMenu(const QPoint& pos) {
+
+  QTreeWidgetItem* item = ui.treeWidget->itemAt(pos);
+  if (!item) 
+    return;
+
+  QMenu menu(this);
+
+  if (item->text(0) == Shape_Circle_Group) {
+
+    QAction* addCircle = menu.addAction("Add Circle");
+    connect(addCircle, &QAction::triggered, this, &MainWindow::addCircleShape);
+
+  }
+  else if (item->text(0) == Shape_Ellipse_Group) {
+
+    QAction* addEllipse = menu.addAction("Add Ellipse");
+    connect(addEllipse, &QAction::triggered, this, &MainWindow::addEllipseShape);
+  }
+  else if (item->text(0) == Shape_Rectangle_Group) {
+
+    QAction* addRectangle = menu.addAction("Add Rectangle");
+    connect(addRectangle, &QAction::triggered, this, &MainWindow::addRectShape);
+  }
+
+  menu.exec(ui.treeWidget->viewport()->mapToGlobal(pos));
 }
 
 /*

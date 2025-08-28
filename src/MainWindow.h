@@ -23,8 +23,7 @@ public:
    void createEditMenus();
    void initTreeWidget();
    void closeEvent(QCloseEvent* event) override;
-
-   
+   void showTreeWidgetContextMenu(const QPoint& pos);
 
 protected slots:
   void openFile();
