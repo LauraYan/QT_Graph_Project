@@ -270,7 +270,8 @@ void MainWindow::addCircleShape() {
 
   QGraphicsEllipseItem* circle = mGraphScene->addEllipse(100, 100, 100, 100, QPen(Qt::black), QBrush(Qt::green));
   circle->setFlag(QGraphicsItem::ItemIsSelectable, true);
-  ui.statusBar->showMessage("Added a circle!", 3000);
+  circle->setFlag(QGraphicsItem::ItemIsMovable);
+  ui.statusBar->showMessage("Added a circle!");
 
   addNewTreeWidgetItem(Shape_Circle_Group, circle);
 }
@@ -282,7 +283,8 @@ void MainWindow::addRectShape() {
 
   QGraphicsRectItem* rect = mGraphScene->addRect(50, 50, 200, 100, QPen(Qt::black), QBrush(Qt::blue));
   rect->setFlag(QGraphicsItem::ItemIsSelectable, true);
-  ui.statusBar->showMessage("Added a rectangle!", 3000);
+  rect->setFlag(QGraphicsItem::ItemIsMovable);
+  ui.statusBar->showMessage("Added a rectangle!");
 
   addNewTreeWidgetItem(Shape_Rectangle_Group, rect);
 }
@@ -294,7 +296,8 @@ void MainWindow::addEllipseShape() {
 
   QGraphicsEllipseItem* ellipse = mGraphScene->addEllipse(300, 200, 100, 100, QPen(Qt::red), QBrush(Qt::yellow));
   ellipse->setFlag(QGraphicsItem::ItemIsSelectable, true);
-  ui.statusBar->showMessage("Added an ellipse!", 3000);
+  ellipse->setFlag(QGraphicsItem::ItemIsMovable);
+  ui.statusBar->showMessage("Added an ellipse!");
 
   addNewTreeWidgetItem(Shape_Ellipse_Group, ellipse);
 }
