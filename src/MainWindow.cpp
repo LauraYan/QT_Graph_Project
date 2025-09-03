@@ -329,14 +329,21 @@ void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* g
       ui.treeWidget->clearSelection();  // Optional: clear previous selection
 
       for (QGraphicsItem* item : selectedItems) {
-        if (auto* selectedItem = dynamic_cast<QGraphicsItem*>(item)) {
-          if (mGraphicTreeItemHash.contains(selectedItem)) {
-            mGraphicTreeItemHash[selectedItem]->setSelected(true);
-            ui.treeWidget->scrollToItem(mGraphicTreeItemHash[selectedItem]);  
-          }
+       
+        if (mGraphicTreeItemHash.contains(item)) {
+          mGraphicTreeItemHash[item]->setSelected(true);
+          ui.treeWidget->scrollToItem(mGraphicTreeItemHash[item]);
         }
       }
-      });
+    });
   }
+
+  // Update status bar
+  if(groupName == Shape_Circle_Group)
+    ui.statusBar->showMessage("Added a circle!");
+  else if (groupName == Shape_Ellipse_Group)
+    ui.statusBar->showMessage("Added an ellipse!");
+  else
+    ui.statusBar->showMessage("Added an rectangle!");
 }  // addNewTreeWidgetItem()
 
