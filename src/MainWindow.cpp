@@ -306,7 +306,7 @@ void MainWindow::addEllipseShape() {
 * This function will add new item into the tree widget.
 */
 void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* graphicItem) {
-  // 2. Add corresponding entry in the tree under a group
+
   QList<QTreeWidgetItem*> found = ui.treeWidget->findItems(groupName, Qt::MatchExactly | Qt::MatchRecursive);
   if (!found.isEmpty()) {
     QTreeWidgetItem* group = found.first();
@@ -317,6 +317,7 @@ void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* g
     // Optional: link the QGraphicsItem with the tree item via QVariant
     newItem->setData(0, Qt::UserRole, QVariant::fromValue((void*)graphicItem));
 
+    // Added the new item into mGraphicTreeItemHash 
     mGraphicTreeItemHash.insert(graphicItem, newItem);
     graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
     graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -328,10 +329,10 @@ void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* g
       ui.treeWidget->clearSelection();  // Optional: clear previous selection
 
       for (QGraphicsItem* item : selectedItems) {
-        if (auto* ellipse = dynamic_cast<QGraphicsItem*>(item)) {
-          if (mGraphicTreeItemHash.contains(ellipse)) {
-            mGraphicTreeItemHash[ellipse]->setSelected(true);
-            ui.treeWidget->scrollToItem(mGraphicTreeItemHash[ellipse]);  // Optional: bring into view
+        if (auto* selectedItem = dynamic_cast<QGraphicsItem*>(item)) {
+          if (mGraphicTreeItemHash.contains(selectedItem)) {
+            mGraphicTreeItemHash[selectedItem]->setSelected(true);
+            ui.treeWidget->scrollToItem(mGraphicTreeItemHash[selectedItem]);  
           }
         }
       }
