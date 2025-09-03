@@ -7,6 +7,7 @@
 class QGraphicsScene;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QGraphicsItem;
 
 class MainWindow : public QMainWindow
 {
@@ -16,11 +17,11 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-  void createMenus();
+  void createMenu();
  
  protected:
-   void createFileMenus();
-   void createEditMenus();
+   void createFileMenu();
+   void createEditMenu();
    void initTreeWidget();
    void closeEvent(QCloseEvent* event) override;
    void showTreeWidgetContextMenu(const QPoint& pos);
@@ -36,10 +37,11 @@ protected slots:
   void addEllipseShape();
   void onTreeItemClicked(QTreeWidgetItem* item, int column);
   void addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* graphicItem);
- 
+
 private:
     Ui::MainWindow ui;
     QGraphicsScene* mGraphScene;
     GraphicsView* mGraphView;
+    QHash<QGraphicsItem*, QTreeWidgetItem*> mGraphicTreeItemHash;
 };
 

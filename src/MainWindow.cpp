@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui.setupUi(this);
 
-    createMenus(); 
+    createMenu(); 
   
     mGraphScene = new QGraphicsScene(ui.frame);
     mGraphScene->setSceneRect(ui.frame->x(), ui.frame->y(), 1000, 600);
@@ -43,14 +43,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui.treeWidget, &QTreeWidget::itemClicked, this, &MainWindow::onTreeItemClicked);
     connect(mGraphView, &GraphicsView::itmeAdded, this, &MainWindow::addNewTreeWidgetItem);
     connect(ui.treeWidget, &QTreeWidget::customContextMenuRequested, this, &MainWindow::showTreeWidgetContextMenu);
-}
+}  // MainWindow()
 
 /*
 * Destructor function
 */
 MainWindow::~MainWindow() {
 
-}
+}  // ~MainWindow()
 
 /*
 * This will open an image to display it on the view.
@@ -61,7 +61,7 @@ void MainWindow::openFile() {
     QPixmap pix(fileName);
     mGraphScene->addPixmap(pix);
   }
-}
+}  // openFile()
 
 /*
 * This will save image into a png image file, then pop up the folder of this file.
@@ -77,7 +77,7 @@ void MainWindow::saveImageFile() {
     image.save(fileName);
     QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(fileName).absolutePath()));
   }  // if
-}
+}  // saveImageFile()
 
 /*
 * This will save image into a pdf file, then pop up the folder of this file.
@@ -113,7 +113,7 @@ void MainWindow::savePDFFile() {
   imagePainter.end();
 
   QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(fileName).absolutePath()));
-}
+}  // savePDFFile()
 
 /*
 * quit this main window.
@@ -121,7 +121,7 @@ void MainWindow::savePDFFile() {
 void MainWindow::exitApp() {
 
   QApplication::quit();
-}
+}  // exitApp()
 
 /*
 * This is overrided close event function.
@@ -142,21 +142,21 @@ void MainWindow::closeEvent(QCloseEvent* event)  {
     event->accept();  
   else 
     event->ignore(); 
-}
+}  // closeEvent()
 
 /*
 * Wrapper funciton to add File and Edit menu.
 */
-void MainWindow::createMenus() {
+void MainWindow::createMenu() {
 
-  createFileMenus();
-  createEditMenus();
-}
+  createFileMenu();
+  createEditMenu();
+} //createMenu()
 
 /*
 * Create a File menu and actions.
 */
-void MainWindow::createFileMenus() {
+void MainWindow::createFileMenu() {
 
   QMenu* fileMenu = menuBar()->addMenu("&File");
 
@@ -177,12 +177,12 @@ void MainWindow::createFileMenus() {
   QAction* exitAction = new QAction("E&xit", this);
   connect(exitAction, &QAction::triggered, this, &MainWindow::exitApp);
   fileMenu->addAction(exitAction);
-}
+}  // createFileMenu()
 
 /*
 * Create a Edit menu and actions.
 */
-void MainWindow::createEditMenus() {
+void MainWindow::createEditMenu() {
 
   QMenu* editMenu = menuBar()->addMenu("&Edit");
 
@@ -198,7 +198,7 @@ void MainWindow::createEditMenus() {
   QAction* addEllipseAction = new QAction("&Add Ellipse", this);
   connect(addEllipseAction, &QAction::triggered, this, &MainWindow::addEllipseShape);
   editMenu->addAction(addEllipseAction);
-}
+}  // createEditMenu()
 
 /*
 * This will create a tree widget and its shape group name.
@@ -217,7 +217,7 @@ void MainWindow::initTreeWidget() {
 
   QTreeWidgetItem* rectRoot = new QTreeWidgetItem(ui.treeWidget);
   rectRoot->setText(0, Shape_Rectangle_Group);
-}
+ }  // initTreeWidget()
 
 /*
 * slot function click the tree widget item, will select it on the view area.
@@ -233,7 +233,7 @@ void MainWindow::onTreeItemClicked(QTreeWidgetItem* item, int column) {
     shape->setSelected(true);
     ui.statusBar->showMessage(item->text(column));
   }
-}
+}  // onTreeItemClicked()
 
 void MainWindow::showTreeWidgetContextMenu(const QPoint& pos) {
 
@@ -261,7 +261,7 @@ void MainWindow::showTreeWidgetContextMenu(const QPoint& pos) {
   }
 
   menu.exec(ui.treeWidget->viewport()->mapToGlobal(pos));
-}
+}  // showTreeWidgetContextMenu()
 
 /*
 * slot function to draw a circle shape.
@@ -274,7 +274,7 @@ void MainWindow::addCircleShape() {
   ui.statusBar->showMessage("Added a circle!");
 
   addNewTreeWidgetItem(Shape_Circle_Group, circle);
-}
+}  // addCircleShape()
 
 /*
 * slot function to draw a rectangle shape.
@@ -287,7 +287,7 @@ void MainWindow::addRectShape() {
   ui.statusBar->showMessage("Added a rectangle!");
 
   addNewTreeWidgetItem(Shape_Rectangle_Group, rect);
-}
+}  // addRectShape()
 
 /*
 * slot function to draw a ellipse shape.
@@ -300,7 +300,7 @@ void MainWindow::addEllipseShape() {
   ui.statusBar->showMessage("Added an ellipse!");
 
   addNewTreeWidgetItem(Shape_Ellipse_Group, ellipse);
-}
+}  // addEllipseShape()
 
 /*
 * This function will add new item into the tree widget.
@@ -316,5 +316,26 @@ void MainWindow::addNewTreeWidgetItem(const QString& groupName, QGraphicsItem* g
 
     // Optional: link the QGraphicsItem with the tree item via QVariant
     newItem->setData(0, Qt::UserRole, QVariant::fromValue((void*)graphicItem));
+
+    mGraphicTreeItemHash.insert(graphicItem, newItem);
+    graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+
+    // This lamda creats a connection between tree widget items and grapic scene items.
+    // If select a graphic item, the related tree widget item will be hightlighted.
+    connect(mGraphScene, &QGraphicsScene::selectionChanged, this, [=]() {
+      QList<QGraphicsItem*> selectedItems = mGraphScene->selectedItems();
+      ui.treeWidget->clearSelection();  // Optional: clear previous selection
+
+      for (QGraphicsItem* item : selectedItems) {
+        if (auto* ellipse = dynamic_cast<QGraphicsItem*>(item)) {
+          if (mGraphicTreeItemHash.contains(ellipse)) {
+            mGraphicTreeItemHash[ellipse]->setSelected(true);
+            ui.treeWidget->scrollToItem(mGraphicTreeItemHash[ellipse]);  // Optional: bring into view
+          }
+        }
+      }
+      });
   }
-}
+}  // addNewTreeWidgetItem()
+

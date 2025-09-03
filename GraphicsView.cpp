@@ -13,7 +13,7 @@ const QString Shape_Rectangle_Group = "Rectangle";
 GraphicsView::GraphicsView(QGraphicsScene* scene, QWidget* parent) : QGraphicsView(scene, parent) {
 
   mScene = scene;
-}
+}  //GraphicsView()
 
 void GraphicsView::contextMenuEvent(QContextMenuEvent* event) {
 
@@ -46,6 +46,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event) {
         QPen(Qt::black), QBrush(Qt::green));
 
       circle->setFlag(QGraphicsItem::ItemIsSelectable, true);
+      circle->setFlag(QGraphicsItem::ItemIsMovable, true);
       emit itmeAdded(Shape_Circle_Group, circle);
     }
     else if (selectedAction == addRect) {
@@ -53,6 +54,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event) {
         QPen(Qt::black), QBrush(Qt::blue));
 
       rect->setFlag(QGraphicsItem::ItemIsSelectable, true);
+      rect->setFlag(QGraphicsItem::ItemIsMovable, true);
       emit itmeAdded(Shape_Rectangle_Group, rect);
 
     }
@@ -61,6 +63,7 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event) {
         QPen(Qt::black), QBrush(Qt::yellow));
 
       ellipse->setFlag(QGraphicsItem::ItemIsSelectable, true);
+      ellipse->setFlag(QGraphicsItem::ItemIsMovable, true);
       emit itmeAdded(Shape_Ellipse_Group, ellipse);
     }
   }
@@ -71,11 +74,16 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent* event) {
     QAction* deleteAction = menu.addAction("Delete Selected");
     QAction* chosen = menu.exec(event->globalPos());
     if (chosen == deleteAction) {
+    /*
       for (QGraphicsItem* item : selected) {
+
+        emit itemDeleted(Shape_Ellipse_Group, item);
+
         scene()->removeItem(item);
         delete item; // free memory
       }  // for
+      */
+      emit itemDeleted(Shape_Ellipse_Group);
     }  // if
-    //QAction* chosen = menu.exec(event->globalPos());
   }  // else if
-}
+}  // contextMenuEvent()

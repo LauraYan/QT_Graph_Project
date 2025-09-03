@@ -12,9 +12,9 @@ public:
   GraphicsView(QGraphicsScene* scene, QWidget* parent = nullptr);
 
 signals:
-  void itmeAdded(const QString name, QGraphicsItem* circle);
+  void itmeAdded(const QString name, QGraphicsItem* item);
+  void itemDeleted(const QString name);
  
-
 protected:
   void contextMenuEvent(QContextMenuEvent* event) override;
 
